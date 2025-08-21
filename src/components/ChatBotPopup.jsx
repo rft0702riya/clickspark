@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext';
 
 const botReplies = [
   "That's awesome! Tell me more.",
@@ -24,6 +25,7 @@ const TypingIndicator = () => (
 );
 
 const ChatBotPopup = ({ onClose }) => {
+  const { currentTheme } = useTheme();
   const [messages, setMessages] = useState([
     { from: 'bot', text: "👋 Hi! I'm ClickSpark Bot. How can I help you today?", greeting: true }
   ]);
@@ -123,6 +125,7 @@ const ChatBotPopup = ({ onClose }) => {
             onChange={e => setInput(e.target.value)}
             placeholder="Type your message..."
             className="flex-1 border border-gray-300 rounded-full sm:rounded-full px-2 sm:px-3 py-1 sm:py-1.5 focus:ring-2 focus:ring-yellow-400 outline-none text-xs sm:text-sm"
+            style={{ color: currentTheme.textPrimary }}
             autoFocus
           />
           <button type="submit" className="bg-yellow-400 text-black px-2 sm:px-3 py-1 sm:py-1.5 rounded-full sm:rounded-full font-semibold shadow hover:bg-yellow-500 transition-all text-xs sm:text-sm">

@@ -1,263 +1,285 @@
 import React, { useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, CheckCircle } from 'lucide-react';
+import { ArrowRight, CheckCircle, Star, Users, TrendingUp, Target, Zap, Shield, Award, Clock, Phone, Mail } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 const GetStarted = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    business: '',
-    goal: '',
-    needs: '',
-  });
-
-  const [errors, setErrors] = useState({});
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: '' }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.name) newErrors.name = 'Name is required';
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Valid email is required';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      console.log('Form submitted:', formData);
-    }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.3 } },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, rotate: -5 },
-    visible: (i) => ({ opacity: 1, rotate: 0, transition: { delay: i * 0.1, duration: 0.3 } }),
-    hover: { scale: 1.03, rotate: 1, boxShadow: '0 5px 10px rgba(0,0,0,0.1)' },
-  };
-
-  const buttonVariants = {
-    hover: { scale: 1.05, boxShadow: '0 0 10px rgba(250, 204, 21, 0.3)' },
-    tap: { scale: 0.95 },
-  };
+  const { currentTheme } = useTheme();
+  const [activeTab, setActiveTab] = useState('strategy');
 
   const { scrollY } = useScroll();
   const yWave = useTransform(scrollY, [0, 200], [0, -10]);
 
-  return (
-    <section className="relative min-h-[60vh] sm:min-h-[65vh] md:min-h-[70vh] py-6 sm:py-8 md:py-12 px-2 sm:px-4">
-      <motion.div
-        className="absolute inset-0 z-0"
-        style={{ y: yWave }}
-      >
-        <svg
-          className="w-full h-full opacity-10"
-          viewBox="0 0 1440 320"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill="#facc15"
-            fillOpacity="0.2"
-            d="M0,192L60,202.7C120,213,240,235,360,213.3C480,192,600,128,720,112C840,96,960,128,1080,149.3C1200,171,1320,181,1380,186.7L1440,192V320H0V192Z"
-          />
-        </svg>
-      </motion.div>
+  const benefits = [
+    { icon: <Target className="w-6 h-6" />, title: "Targeted Strategy", desc: "Data-driven approach to reach your ideal customers" },
+    { icon: <TrendingUp className="w-6 h-6" />, title: "Measurable Results", desc: "Track your ROI with detailed analytics" },
+    { icon: <Zap className="w-6 h-6" />, title: "Quick Implementation", desc: "See results in as little as 30 days" },
+    { icon: <Shield className="w-6 h-6" />, title: "Risk-Free Start", desc: "Free audit and consultation before commitment" },
+  ];
 
-      <div className="max-w-xs sm:max-w-lg md:max-w-4xl mx-auto relative z-10">
+  const testimonials = [
+    { name: "Sarah Johnson", role: "CEO, TechStart", rating: 5, text: "ClickSpark transformed our online presence. 300% increase in leads!" },
+    { name: "Mike Chen", role: "Founder, EcoStore", rating: 5, text: "Professional team, exceptional results. Highly recommended!" },
+    { name: "Lisa Rodriguez", role: "Marketing Director", rating: 5, text: "Best investment we made. ROI exceeded expectations." },
+  ];
+
+  const packages = [
+    {
+      name: "Starter",
+      price: "$997",
+      duration: "month",
+      features: ["Website Audit", "SEO Strategy", "30-Day Plan", "Email Support"],
+      popular: false
+    },
+    {
+      name: "Growth",
+      price: "$2,497",
+      duration: "month",
+      features: ["Everything in Starter", "Content Strategy", "Social Media", "Weekly Calls", "Priority Support"],
+      popular: true
+    },
+    {
+      name: "Enterprise",
+      price: "Custom",
+      duration: "",
+      features: ["Full-Service Marketing", "Dedicated Manager", "Custom Strategy", "24/7 Support"],
+      popular: false
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      {/* Hero Section */}
+      <section className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 lg:px-8">
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="text-center mb-4 sm:mb-6 md:mb-8"
+          className="absolute inset-0 z-0"
+          style={{ y: yWave }}
         >
-          <motion.h1
-            variants={itemVariants}
-            className="text-xl sm:text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600 mb-1 sm:mb-2"
-          >
-            Launch Your Digital Adventure
-          </motion.h1>
-          <motion.p
-            variants={itemVariants}
-            className="text-xs sm:text-sm md:text-base text-gray-600 max-w-xs sm:max-w-md mx-auto"
-          >
-            Connect with our experts to unlock a tailored strategy that skyrockets your brand online!
-          </motion.p>
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-orange-400/10"></div>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 md:grid-cols-5 gap-2 sm:gap-4"
-        >
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
-            variants={itemVariants}
-            className="md:col-span-2"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
           >
-            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2 sm:mb-4">Your Growth Toolkit</h2>
-            <div className="space-y-1 sm:space-y-2">
-              {[
-                'Free Website Audit & Report',
-                'Custom Digital Marketing Plan',
-                '30-Minute Strategy Call',
-                'Expert Recommendations',
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  custom={i}
-                  variants={cardVariants}
-                  initial="hidden"
-                  animate="visible"
-                  whileHover="hover"
-                  className="bg-white p-1 sm:p-2 rounded-md sm:rounded-lg shadow-md border border-yellow-100"
-                >
-                  <div className="flex items-center space-x-1 sm:space-x-2">
-                    <CheckCircle
-                      className="w-3 sm:w-4 h-3 sm:h-4 text-yellow-400 transform hover:scale-110 transition-transform"
-                    />
-                    <span className="text-gray-700 text-xs sm:text-sm">{item}</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-            <motion.div
-              variants={itemVariants}
-              className="mt-2 sm:mt-4"
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6"
             >
-              <img
-                src="/digital-marketing-illustration.svg"
-                alt="Digital Marketing Illustration"
-                className="w-full h-24 sm:h-32 rounded-md sm:rounded-lg shadow-md"
-                onError={(e) => (e.target.src = 'https://source.unsplash.com/featured/?digitalmarketing')}
-              />
+              Ready to <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Dominate</span> Your Market?
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-xl sm:text-2xl text-gray-600 max-w-3xl mx-auto mb-8"
+            >
+              Join 500+ businesses that have transformed their digital presence with our proven strategies
+            </motion.p>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(245, 158, 11, 0.3)' }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-xl text-lg font-bold flex items-center gap-3 shadow-lg"
+              >
+                Get Your Free Strategy Call <ArrowRight className="w-5 h-5" />
+              </motion.button>
+              <div className="flex items-center gap-2 text-gray-600">
+                <Clock className="w-5 h-5 text-yellow-500" />
+                <span>15-minute consultation</span>
+              </div>
             </motion.div>
           </motion.div>
 
+          {/* Social Proof */}
           <motion.div
-            variants={itemVariants}
-            className="md:col-span-3 bg-white p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl shadow-md border border-gray-100"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
           >
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2 sm:mb-4">Let’s Make Magic Happen</h3>
-            <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3">
-              <div className="relative">
-                <motion.input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Your Name"
-                  className={`w-full p-1 sm:p-2 border-2 rounded-md sm:rounded-lg focus:outline-none focus:border-yellow-400 transition-all ${
-                    errors.name ? 'border-red-400 animate-shake' : 'border-gray-200'
-                  } text-xs sm:text-sm`}
-                  required
-                  whileFocus={{ scale: 1.01, borderColor: "#FACC15", boxShadow: "0 0 8px rgba(250, 204, 21, 0.4)" }}
-                  transition={{ duration: 0.2 }}
-                />
-                {errors.name && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-red-400 text-xs mt-1"
-                  >
-                    {errors.name}
-                  </motion.p>
-                )}
-              </div>
-              <div className="relative">
-                <motion.input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Your Email"
-                  className={`w-full p-1 sm:p-2 border-2 rounded-md sm:rounded-lg focus:outline-none focus:border-yellow-400 transition-all ${
-                    errors.email ? 'border-red-400 animate-shake' : 'border-gray-200'
-                  } text-xs sm:text-sm`}
-                  required
-                  whileFocus={{ scale: 1.01, borderColor: "#FACC15", boxShadow: "0 0 8px rgba(250, 204, 21, 0.4)" }}
-                  transition={{ duration: 0.2 }}
-                />
-                {errors.email && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-red-400 text-xs mt-1"
-                  >
-                    {errors.email}
-                  </motion.p>
-                )}
-              </div>
-              <div className="relative">
-                <label htmlFor="business" className="sr-only">Business Type</label>
-                <motion.input
-                  type="text"
-                  id="business"
-                  name="business"
-                  value={formData.business}
-                  onChange={handleChange}
-                  placeholder="Your Business Type (e.g., E-commerce, SaaS)"
-                  className="w-full p-1 sm:p-2 border-2 border-gray-200 rounded-md sm:rounded-lg focus:outline-none focus:border-yellow-400 transition-all text-xs sm:text-sm"
-                  whileFocus={{ scale: 1.01, borderColor: "#FACC15", boxShadow: "0 0 8px rgba(250, 204, 21, 0.4)" }}
-                  transition={{ duration: 0.2 }}
-                />
-              </div>
-              <div className="relative">
-                <label htmlFor="goal" className="sr-only">Primary Goal</label>
-                <motion.input
-                  type="text"
-                  id="goal"
-                  name="goal"
-                  value={formData.goal}
-                  onChange={handleChange}
-                  placeholder="Your Primary Goal (e.g., Increase Leads, Boost Sales)"
-                  className="w-full p-1 sm:p-2 border-2 border-gray-200 rounded-md sm:rounded-lg focus:outline-none focus:border-yellow-400 transition-all text-xs sm:text-sm"
-                  whileFocus={{ scale: 1.01, borderColor: "#FACC15", boxShadow: "0 0 8px rgba(250, 204, 21, 0.4)" }}
-                  transition={{ duration: 0.2 }}
-                />
-              </div>
-              <div className="relative">
-                <label htmlFor="needs" className="sr-only">Specific Needs</label>
-                <motion.textarea
-                  id="needs"
-                  name="needs"
-                  value={formData.needs}
-                  onChange={handleChange}
-                  placeholder="Tell us about your specific needs or challenges (optional)"
-                  rows="3"
-                  className="w-full p-1 sm:p-2 border-2 border-gray-200 rounded-md sm:rounded-lg focus:outline-none focus:border-yellow-400 transition-all text-xs sm:text-sm"
-                  whileFocus={{ scale: 1.01, borderColor: "#FACC15", boxShadow: "0 0 8px rgba(250, 204, 21, 0.4)" }}
-                  transition={{ duration: 0.2 }}
-                ></motion.textarea>
-              </div>
-              <motion.button
-                type="submit"
-                variants={buttonVariants}
-                whileHover="hover"
-                whileTap="tap"
-                className="w-full bg-yellow-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl hover:bg-yellow-600 transition-all font-semibold text-sm sm:text-base flex items-center justify-center gap-1 sm:gap-2"
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1 + index * 0.1 }}
+                className="bg-white p-6 rounded-xl shadow-lg border border-gray-100"
               >
-                Submit for Custom Plan <ArrowRight className="w-4 h-4" />
-              </motion.button>
-            </form>
+                <div className="flex items-center gap-1 mb-3">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 italic">"{testimonial.text}"</p>
+                <div>
+                  <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                  <p className="text-sm text-gray-500">{testimonial.role}</p>
+                </div>
+              </motion.div>
+            ))}
           </motion.div>
-        </motion.div>
-      </div>
-    </section>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              Why Choose ClickSpark?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              We don't just create campaigns, we build digital empires
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {benefits.map((benefit, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="text-center p-6 rounded-xl bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-100"
+              >
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mx-auto mb-4 text-white">
+                  {benefit.icon}
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{benefit.title}</h3>
+                <p className="text-gray-600">{benefit.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              Choose Your Growth Path
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Flexible plans designed to scale with your business
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {packages.map((pkg, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className={`relative bg-white p-8 rounded-xl shadow-lg border-2 ${
+                  pkg.popular ? 'border-yellow-500 scale-105' : 'border-gray-200'
+                }`}
+              >
+                {pkg.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold">
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+                
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{pkg.name}</h3>
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-4xl font-bold text-gray-900">{pkg.price}</span>
+                    <span className="text-gray-500">/{pkg.duration}</span>
+                  </div>
+                </div>
+
+                <ul className="space-y-3 mb-8">
+                  {pkg.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-yellow-500 flex-shrink-0" />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-all ${
+                    pkg.popular
+                      ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg'
+                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                  }`}
+                >
+                  Get Started
+                </motion.button>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-500 to-orange-500">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+              Ready to Transform Your Business?
+            </h2>
+            <p className="text-xl text-yellow-100 mb-8 max-w-2xl mx-auto">
+              Join hundreds of successful businesses that have already taken the leap
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <motion.button
+                whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white text-yellow-600 px-8 py-4 rounded-xl text-lg font-bold flex items-center gap-3 shadow-lg"
+              >
+                Schedule Free Consultation <Phone className="w-5 h-5" />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-bold flex items-center gap-3 hover:bg-white hover:text-yellow-600 transition-all"
+              >
+                Download Case Study <ArrowRight className="w-5 h-5" />
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    </div>
   );
 };
 

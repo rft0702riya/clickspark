@@ -1,7 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext';
 
 const AboutUsSection = () => {
+  const { currentTheme } = useTheme();
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut", staggerChildren: 0.2 } },
@@ -18,7 +20,7 @@ const AboutUsSection = () => {
   };
 
   return (
-    <section id="about" className="py-6 sm:py-8 md:py-12 lg:py-16 bg-white relative overflow-hidden">
+    <section id="about" className="py-6 sm:py-8 md:py-12 lg:py-16 relative overflow-hidden" style={{ background: currentTheme.backgroundPrimary }}>
       <div className="absolute inset-0 z-0">
         <svg
           className="w-full h-full opacity-10"
@@ -70,7 +72,7 @@ const AboutUsSection = () => {
           </motion.div>
           <div className="text-center md:text-left">
             <motion.div variants={itemVariants} className="relative inline-block mb-2 sm:mb-3">
-              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold" style={{ color: currentTheme.textPrimary }}>
                 About <span className="text-yellow-400">Us</span>
               </h2>
               <div className="absolute bottom-0 left-0 h-0.5 sm:h-1 bg-yellow-400 rounded-full w-12 sm:w-16" />
@@ -80,7 +82,8 @@ const AboutUsSection = () => {
                 variants={itemVariants}
                 whileHover={{ scale: 1.02, color: "#FACC15" }}
                 transition={{ duration: 0.2 }}
-                className="text-sm sm:text-base md:text-lg leading-relaxed text-gray-600"
+                className="text-sm sm:text-base md:text-lg leading-relaxed"
+                style={{ color: currentTheme.textSecondary }}
               >
                 We're a <span className="text-yellow-400 font-medium">forward-thinking organization</span>, launched on August 7, 2024, blending digital marketing excellence with innovative education. With a tech-savvy, strategic edge, we boost brands online and empower learning platforms for the future.
               </motion.p>
@@ -88,18 +91,20 @@ const AboutUsSection = () => {
                 variants={itemVariants}
                 whileHover={{ scale: 1.02, color: "#FACC15" }}
                 transition={{ duration: 0.2 }}
-                className="text-sm sm:text-base md:text-lg leading-relaxed text-gray-600"
+                className="text-sm sm:text-base md:text-lg leading-relaxed"
+                style={{ color: currentTheme.textSecondary }}
               >
                 Our dual focus drives <span className="text-yellow-400 font-medium">impactful campaigns</span> and projects, fostering engagement and skill development for startups to institutions. Specializing in brand promotion, building, and growth, we harness cutting-edge digital tools and social media for maximum visibility and results.
               </motion.p>
-              <motion.p
-                variants={itemVariants}
-                whileHover={{ scale: 1.02, color: "#FACC15" }}
-                transition={{ duration: 0.2 }}
-                className="text-sm sm:text-base md:text-lg leading-relaxed text-gray-600"
-              >
-                Led by a <span className="text-yellow-400 font-medium">passionate team</span>, we fuse creativity, data insights, and trend expertise to fuel transformation. Committed to <span className="text-yellow-400 font-medium">innovation, integrity, and success</span>, we empower partners to thrive in a digital world!
-              </motion.p>
+                             <motion.p
+                 variants={itemVariants}
+                 whileHover={{ scale: 1.02, color: "#FACC15" }}
+                 transition={{ duration: 0.2 }}
+                 className="text-sm sm:text-base md:text-lg leading-relaxed"
+                 style={{ color: currentTheme.textSecondary }}
+               >
+                 Led by a <span className="text-yellow-400 font-medium">passionate team</span>, we fuse creativity, data insights, and trend expertise to fuel transformation. Committed to <span className="text-yellow-400 font-medium">innovation, integrity, and success</span>, we empower partners to thrive in a digital world!
+               </motion.p>
             </motion.div>
           </div>
         </div>

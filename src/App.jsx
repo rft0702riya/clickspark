@@ -5,12 +5,22 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from
 import Navbar from './components/layout/Navbar.jsx';
 import Footer from './components/layout/Footer.jsx';
 import Contact from './pages/Contact.jsx';
+import Projects from './pages/Projects.jsx';
 import ChatBotPopup from './components/ChatBotPopup.jsx';
+import ChatBotButton from './components/ChatBotButton.jsx';
 import GetStarted from './pages/GetStarted.jsx';
 import { Tilt } from 'react-tilt';
-import DateTimePickerModal from './components/DateTimePickerModal.jsx';
+
 import AboutUsSection from './components/AboutUsSection.jsx';
+import ConsultationForm from './components/ConsultationForm.jsx';
 import { AnimatePresence } from 'framer-motion';
+import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+import './styles/global.css';
+import Login from './components/auth/Login.jsx';
+import Register from './components/auth/Register.jsx';
+import UserProfile from './components/auth/UserProfile.jsx';
+import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 
 // Global Carousel Data
 const carouselSentences = [
@@ -86,6 +96,7 @@ const servicesData = [
 ];
 
 function WorkSection({ workProjects }) {
+  const { currentTheme } = useTheme();
   const headerVariants = {
     hidden: { opacity: 0, y: 0 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
@@ -107,7 +118,7 @@ function WorkSection({ workProjects }) {
   };
 
   return (
-    <section id="work" className="py-10 sm:py-16 bg-gray-100">
+    <section id="work" className="py-10 sm:py-16" style={{ background: currentTheme.backgroundTertiary }}>
       <div className="container mx-auto px-4 sm:px-6 md:px-8">
         <motion.div
           variants={headerVariants}
@@ -116,10 +127,10 @@ function WorkSection({ workProjects }) {
           viewport={{ once: true }}
           className="text-center mb-4 sm:mb-6 md:mb-8"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 tracking-tight" style={{ color: currentTheme.textPrimary }}>
             Our Work
           </h2>
-          <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-xl sm:max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg max-w-xl sm:max-w-2xl mx-auto" style={{ color: currentTheme.textSecondary }}>
             Explore our portfolio of innovative projects that drive digital success.
           </p>
         </motion.div>
@@ -138,7 +149,12 @@ function WorkSection({ workProjects }) {
                 whileInView="visible"
                 whileHover={{ scale: 1.03, boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)' }}
                 viewport={{ once: true }}
-                className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden h-full"
+                className="rounded-xl shadow-lg border overflow-hidden h-full"
+                style={{ 
+                  background: currentTheme.backgroundPrimary,
+                  borderColor: currentTheme.borderColor,
+                  boxShadow: `0 4px 6px ${currentTheme.shadowColor}`
+                }}
               >
                 <div className="relative w-full h-32 sm:h-40 md:h-48">
                   <motion.img
@@ -169,10 +185,10 @@ function WorkSection({ workProjects }) {
                   <span className="inline-block bg-yellow-100 text-yellow-800 text-xs font-semibold px-1 sm:px-2 py-1 rounded-full mb-1 sm:mb-2">
                     {work.tag}
                   </span>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1">
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1" style={{ color: currentTheme.textPrimary }}>
                     {work.title}
                   </h3>
-                  <p className="text-gray-600 text-xs sm:text-sm md:text-base leading-tight flex-1">
+                  <p className="text-xs sm:text-sm md:text-base leading-tight flex-1" style={{ color: currentTheme.textSecondary }}>
                     {work.desc}
                   </p>
                   <motion.a
@@ -194,13 +210,14 @@ function WorkSection({ workProjects }) {
 
 function AppContent() {
   const [showPopup, setShowPopup] = useState(false);
-  const [showDateModal, setShowDateModal] = useState(false);
+  const [showConsultationForm, setShowConsultationForm] = useState(false);
   const [showSubscriptionPopup, setShowSubscriptionPopup] = useState(false);
   const [showDiscountPopup, setShowDiscountPopup] = useState(false);
   const [showLeadCapturePopup, setShowLeadCapturePopup] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
+  const { currentTheme, isDarkTheme } = useTheme();
 
   useEffect(() => {
     const hasShownNewsletter = localStorage.getItem('newsletterShown');
@@ -214,7 +231,7 @@ function AppContent() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: currentTheme.background }}>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -222,7 +239,7 @@ function AppContent() {
       >
         <Navbar onLetsTalk={() => setShowPopup(true)} />
       </motion.div>
-      <div className="pt-4 sm:pt-6 md:pt-16">
+      <div className="pt-16">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route
@@ -236,8 +253,8 @@ function AppContent() {
                 >
                   <HomePage
                     services={servicesData}
-                    showDateModal={showDateModal}
-                    setShowDateModal={setShowDateModal}
+                    showConsultationForm={showConsultationForm}
+                    setShowConsultationForm={setShowConsultationForm}
                     showSubscriptionPopup={showSubscriptionPopup}
                     setShowSubscriptionPopup={setShowSubscriptionPopup}
                     showDiscountPopup={showDiscountPopup}
@@ -268,6 +285,16 @@ function AppContent() {
                 <ServicesPage services={servicesData} />
               </motion.div>
             } />
+            <Route path="/projects" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <Projects />
+              </motion.div>
+            } />
             <Route path="/contact" element={
               <motion.div
                 initial={{ opacity: 0, y: 0 }}
@@ -288,6 +315,38 @@ function AppContent() {
                 <GetStarted />
               </motion.div>
             } />
+            <Route path="/login" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <Login />
+              </motion.div>
+            } />
+            <Route path="/register" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <Register />
+              </motion.div>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <motion.div
+                  initial={{ opacity: 0, y: 0 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 0 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                >
+                  <UserProfile />
+                </motion.div>
+              </ProtectedRoute>
+            } />
           </Routes>
         </AnimatePresence>
       </div>
@@ -299,7 +358,8 @@ function AppContent() {
         <Footer />
       </motion.div>
       {showPopup && <ChatBotPopup onClose={() => setShowPopup(false)} />}
-      <DateTimePickerModal isOpen={showDateModal} onRequestClose={() => setShowDateModal(false)} />
+      {showConsultationForm && <ConsultationForm isOpen={showConsultationForm} onClose={() => setShowConsultationForm(false)} />}
+      <ChatBotButton />
 
       {showSubscriptionPopup && (
         <motion.div
@@ -426,16 +486,21 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
-function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionPopup, setShowSubscriptionPopup, showDiscountPopup, setShowDiscountPopup, showLeadCapturePopup, setShowLeadCapturePopup }) {
+function HomePage({ services, showConsultationForm, setShowConsultationForm, showSubscriptionPopup, setShowSubscriptionPopup, showDiscountPopup, setShowDiscountPopup, showLeadCapturePopup, setShowLeadCapturePopup }) {
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 300], [0, -20]);
   const y2 = useTransform(scrollY, [0, 300], [0, 20]);
+  const { isDarkTheme, currentTheme } = useTheme();
 
   const navigate = useNavigate();
 
@@ -449,7 +514,7 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
       {/* Hero Section with Video Background */}
       <header
         id="home"
-        className="relative min-h-[60vh] sm:min-h-[65vh] md:min-h-[70vh] lg:min-h-[80vh] flex items-center justify-center overflow-hidden px-2 sm:px-4 md:px-6 lg:px-8"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden"
       >
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
@@ -458,7 +523,7 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
             muted
             loop
             playsInline
-            className="absolute min-w-full min-h-full object-cover"
+            className="absolute w-full h-full object-cover"
             style={{ filter: 'brightness(0.7)' }}
           >
             <source src="/video.mp4" type="video/mp4" />
@@ -472,14 +537,14 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: 'easeOut' }}
-          className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 relative z-10 text-center"
+          className="relative z-10 text-center"
           style={{ y: y2 }}
         >
           <motion.h1
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-2 sm:mb-4 leading-tight"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-2 sm:mb-4 leading-tight px-4"
           >
             Amplify Your <span className="text-yellow-400">Digital Impact</span>
           </motion.h1>
@@ -487,7 +552,7 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
-            className="text-sm sm:text-base md:text-lg lg:text-xl text-white mb-3 sm:mb-6 max-w-xs sm:max-w-md md:max-w-xl mx-auto"
+            className="text-sm sm:text-base md:text-lg lg:text-xl text-white mb-3 sm:mb-6 max-w-xs sm:max-w-md md:max-w-xl mx-auto px-4"
           >
             Bold digital solutions to make your brand unstoppable.
           </motion.p>
@@ -497,7 +562,7 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.6 }}
-            className="bg-yellow-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-base sm:text-lg font-semibold hover:bg-yellow-700 transition-all duration-300 flex items-center mx-auto"
+            className="bg-yellow-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-base sm:text-lg font-semibold hover:bg-yellow-700 transition-all duration-300 flex items-center mx-auto px-4"
             aria-label="Get started with our services"
             onClick={() => navigate('/get-started')}
             onKeyDown={(e) => e.key === 'Enter' && navigate('/get-started')}
@@ -508,7 +573,14 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
       </header>
 
       {/* Carousel Section with Overlay */}
-      <section className="py-4 sm:py-6 md:py-8 lg:py-10 bg-gradient-to-br from-yellow-50 to-white overflow-hidden relative">
+      <section 
+        className="py-4 sm:py-6 md:py-8 lg:py-10 overflow-hidden relative"
+        style={{
+          background: isDarkTheme 
+            ? 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #1e293b 100%)'
+            : 'linear-gradient(135deg, #fef3c7 0%, #ffffff 50%, #fef3c7 100%)'
+        }}
+      >
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
         <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 relative z-10">
           <motion.div
@@ -527,10 +599,22 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
               }}
               style={{ marginTop: '-20px' }}
             >
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-orange-500 inline-block pr-4 sm:pr-8">
+              <h2 
+                className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-orange-500 inline-block pr-4 sm:pr-8"
+                style={{
+                  color: isDarkTheme ? '#ffffff' : '#1f2937',
+                  textShadow: isDarkTheme ? '0 1px 3px rgba(0,0,0,0.8)' : '0 1px 2px rgba(0,0,0,0.1)'
+                }}
+              >
                 {carouselSentences[0]}
               </h2>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-orange-500 inline-block pr-4 sm:pr-8">
+              <h2 
+                className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-orange-500 inline-block pr-4 sm:pr-8"
+                style={{
+                  color: isDarkTheme ? '#ffffff' : '#1f2937',
+                  textShadow: isDarkTheme ? '0 1px 3px rgba(0,0,0,0.8)' : '0 1px 2px rgba(0,0,0,0.1)'
+                }}
+              >
                 {carouselSentences[0]}
               </h2>
             </motion.div>
@@ -542,7 +626,7 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
       <AboutUsSection />
 
       {/* Services Section */}
-      <section id="services" className="py-6 sm:py-8 md:py-12 lg:py-16 bg-white">
+      <section id="services" className="py-6 sm:py-8 md:py-12 lg:py-16" style={{ background: currentTheme.backgroundPrimary }}>
         <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0 }}
@@ -550,8 +634,8 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
             transition={{ duration: 0.8 }}
             className="text-center mb-4 sm:mb-6 md:mb-8 lg:mb-10"
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-2">Our Expertise</h2>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-xs sm:max-w-md mx-auto">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-2" style={{ color: currentTheme.textPrimary }}>Our Expertise</h2>
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl max-w-xs sm:max-w-md mx-auto" style={{ color: currentTheme.textSecondary }}>
               Tailored digital solutions for your brand.
             </p>
           </motion.div>
@@ -564,7 +648,12 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
                 whileHover={{ y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
-                className="bg-white p-2 sm:p-3 md:p-4 lg:p-6 rounded-xl shadow-md border border-gray-100 hover:border-yellow-200 transition-all duration-300 transform hover:scale-105"
+                className="p-2 sm:p-3 md:p-4 lg:p-6 rounded-xl shadow-md border transition-all duration-300 transform hover:scale-105"
+                style={{ 
+                  background: currentTheme.backgroundPrimary,
+                  borderColor: currentTheme.borderColor,
+                  boxShadow: `0 4px 6px ${currentTheme.shadowColor}`
+                }}
                 role="article"
                 aria-labelledby={`service-title-${index}`}
               >
@@ -580,17 +669,17 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.8 }}
                   transition={{ delay: index * 0.1 + 0.1, duration: 0.5, ease: "easeOut" }}
-                  id={`service-title-${index}`} className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 mb-1 sm:mb-2"
-                >
-                  {service.title}
-                </motion.h3>
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.8 }}
-                  transition={{ delay: index * 0.1 + 0.2, duration: 0.5, ease: "easeOut" }}
-                  className="text-gray-600 text-xs sm:text-sm md:text-base"
-                >
+                                id={`service-title-${index}`} className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2" style={{ color: currentTheme.textPrimary }}
+            >
+              {service.title}
+            </motion.h3>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.8 }}
+              transition={{ delay: index * 0.1 + 0.2, duration: 0.5, ease: "easeOut" }}
+              className="text-xs sm:text-sm md:text-base" style={{ color: currentTheme.textSecondary }}
+            >
                   {service.description}
                 </motion.p>
               </motion.div>
@@ -600,15 +689,21 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
       </section>
 
       {/* Work Section */}
-      <WorkSection workProjects={workProjects} />
+      <div style={{ background: currentTheme.backgroundSecondary }}>
+        <WorkSection workProjects={workProjects} />
+      </div>
 
       {/* How We Generate Leads Section */}
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 bg-gradient-to-b from-yellow-50 to-white">
+      <section className="py-6 sm:py-8 md:py-12 lg:py-16" style={{ 
+        background: isDarkTheme 
+          ? 'linear-gradient(to bottom, #111111, #000000)'
+          : 'linear-gradient(to bottom, #fef3c7, #ffffff)'
+      }}>
         <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-3 sm:mb-4">
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-3 sm:mb-4" style={{ color: currentTheme.textPrimary }}>
             How We Generate Leads
           </h2>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-xs sm:max-w-xl mx-auto mb-4 sm:mb-6">
+                      <p className="text-sm sm:text-base md:text-lg lg:text-xl max-w-xs sm:max-w-xl mx-auto mb-4 sm:mb-6" style={{ color: currentTheme.textSecondary }}>
             We use data-driven LinkedIn campaigns to connect you with decision-makers.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
@@ -624,7 +719,11 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ delay: index * 0.15, duration: 0.7, ease: "easeOut" }}
-                className="flex flex-col items-center text-center p-2 sm:p-3 md:p-4 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow duration-300"
+                className="flex flex-col items-center text-center p-2 sm:p-3 md:p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
+                style={{ 
+                  background: currentTheme.backgroundPrimary,
+                  boxShadow: `0 2px 4px ${currentTheme.shadowColor}`
+                }}
               >
                 <motion.span
                   initial={{ opacity: 0 }}
@@ -635,10 +734,10 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
                 >
                   {step.icon}
                 </motion.span>
-                <h3 className="font-semibold text-sm sm:text-base md:text-lg text-gray-900 mb-1">
+                <h3 className="font-semibold text-sm sm:text-base md:text-lg mb-1" style={{ color: currentTheme.textPrimary }}>
                   {step.title}
                 </h3>
-                <p className="text-gray-600 text-xs sm:text-sm md:text-base">{step.desc}</p>
+                <p className="text-xs sm:text-sm md:text-base" style={{ color: currentTheme.textSecondary }}>{step.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -650,8 +749,8 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
             viewport={{ once: true, amount: 0.5 }}
             transition={{ delay: 0.6, duration: 0.7, ease: "easeOut" }}
             className="mt-4 sm:mt-6 bg-yellow-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-sm sm:text-base font-semibold hover:bg-yellow-700 transition-all duration-300"
-            onClick={() => setShowDateModal(true)}
-            onKeyDown={(e) => e.key === 'Enter' && setShowDateModal(true)}
+            onClick={() => setShowConsultationForm(true)}
+            onKeyDown={(e) => e.key === 'Enter' && setShowConsultationForm(true)}
             aria-label="Schedule a free consultation"
           >
             Free Consultation
@@ -660,7 +759,7 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-6 sm:py-8 md:py-12 lg:py-16 bg-gray-50">
+      <section id="contact" className="py-6 sm:py-8 md:py-12 lg:py-16" style={{ background: currentTheme.backgroundTertiary }}>
         <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0 }}
@@ -669,10 +768,10 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="max-w-xs sm:max-w-md md:max-w-lg mx-auto text-center"
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 sm:mb-4" style={{ color: currentTheme.textPrimary }}>
               Get in Touch
             </h2>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-4 sm:mb-6">
+            <p className="text-sm sm:text-base md:text-lg mb-4 sm:mb-6" style={{ color: currentTheme.textSecondary }}>
               Start your digital journey today.
             </p>
             <form className="space-y-3 sm:space-y-4">
@@ -705,6 +804,8 @@ function HomePage({ services, showDateModal, setShowDateModal, showSubscriptionP
           </motion.div>
         </div>
       </section>
+      
+
     </motion.div>
   );
 }
@@ -714,6 +815,7 @@ function AboutPage() {
 }
 
 function ServicesPage({ services }) {
+  const { currentTheme } = useTheme();
   return (
     <div className="container mx-auto px-2 sm:px-4 md:px-6 py-6 sm:py-8 md:py-12">
       <motion.div
@@ -722,8 +824,8 @@ function ServicesPage({ services }) {
         transition={{ duration: 0.8 }}
         className="text-center mb-4 sm:mb-6"
       >
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">Our Services</h1>
-        <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-xs sm:max-w-md mx-auto">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2" style={{ color: currentTheme.textPrimary }}>Our Services</h1>
+        <p className="text-sm sm:text-base md:text-lg max-w-xs sm:max-w-md mx-auto" style={{ color: currentTheme.textSecondary }}>
           Explore our innovative digital solutions.
         </p>
       </motion.div>
@@ -736,7 +838,12 @@ function ServicesPage({ services }) {
             viewport={{ once: true }}
             transition={{ delay: index * 0.1, duration: 0.6 }}
             whileHover={{ y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
-            className="bg-white p-2 sm:p-3 md:p-4 rounded-xl shadow-md border border-gray-100 hover:border-yellow-200 transition-all duration-300"
+            className="p-2 sm:p-3 md:p-4 rounded-xl shadow-md border transition-all duration-300"
+            style={{ 
+              background: currentTheme.backgroundPrimary,
+              borderColor: currentTheme.borderColor,
+              boxShadow: `0 4px 6px ${currentTheme.shadowColor}`
+            }}
             role="article"
             aria-labelledby={`service-title-${index}`}
           >
@@ -752,7 +859,7 @@ function ServicesPage({ services }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.8 }}
               transition={{ delay: index * 0.1 + 0.1, duration: 0.5, ease: "easeOut" }}
-              id={`service-title-${index}`} className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 mb-1 sm:mb-2"
+              id={`service-title-${index}`} className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2" style={{ color: currentTheme.textPrimary }}
             >
               {service.title}
             </motion.h3>
@@ -761,7 +868,7 @@ function ServicesPage({ services }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.8 }}
               transition={{ delay: index * 0.1 + 0.2, duration: 0.5, ease: "easeOut" }}
-              className="text-gray-600 text-xs sm:text-sm md:text-base"
+              className="text-xs sm:text-sm md:text-base" style={{ color: currentTheme.textSecondary }}
             >
               {service.description}
             </motion.p>

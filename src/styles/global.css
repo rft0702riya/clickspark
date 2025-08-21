@@ -1,0 +1,196 @@
+/* Global Theme Styles */
+:root {
+  /* Default light theme variables */
+  --theme-background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 25%, #cbd5e1 50%, #e2e8f0 75%, #f8fafc 100%);
+  --theme-text-primary: #1e293b;
+  --theme-text-secondary: #475569;
+  --theme-text-muted: #64748b;
+  --theme-background-primary: #ffffff;
+  --theme-background-secondary: #f8fafc;
+  --theme-background-tertiary: #e2e8f0;
+  --theme-border-color: #cbd5e1;
+  --theme-accent-color: #f59e0b;
+  --theme-card-background: rgba(255, 255, 255, 0.9);
+  --theme-shadow-color: rgba(0, 0, 0, 0.1);
+  --theme-glass-background: rgba(0, 0, 0, 0.05);
+}
+
+/* Dark theme class */
+body.dark-theme {
+  --theme-background: linear-gradient(135deg, #000000 0%, #111111 25%, #1a1a1a 50%, #111111 75%, #000000 100%);
+  --theme-text-primary: #ffffff;
+  --theme-text-secondary: #e2e8f0;
+  --theme-text-muted: #94a3b8;
+  --theme-background-primary: #000000;
+  --theme-background-secondary: #111111;
+  --theme-background-tertiary: #1a1a1a;
+  --theme-border-color: #333333;
+  --theme-accent-color: #fbbf24;
+  --theme-card-background: rgba(0, 0, 0, 0.8);
+  --theme-shadow-color: rgba(0, 0, 0, 0.5);
+  --theme-glass-background: rgba(255, 255, 255, 0.05);
+}
+
+/* Light theme class */
+body.light-theme {
+  --theme-background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 25%, #cbd5e1 50%, #e2e8f0 75%, #f8fafc 100%);
+  --theme-text-primary: #1e293b;
+  --theme-text-secondary: #475569;
+  --theme-text-muted: #64748b;
+  --theme-background-primary: #ffffff;
+  --theme-background-secondary: #f8fafc;
+  --theme-background-tertiary: #e2e8f0;
+  --theme-border-color: #cbd5e1;
+  --theme-accent-color: #f59e0b;
+  --theme-card-background: rgba(255, 255, 255, 0.9);
+  --theme-shadow-color: rgba(0, 0, 0, 0.1);
+  --theme-glass-background: rgba(0, 0, 0, 0.05);
+}
+
+/* Apply theme to body */
+body {
+  background: var(--theme-background);
+  color: var(--theme-text-primary);
+  transition: all 0.3s ease;
+}
+
+/* Global theme-aware components */
+.theme-bg-primary {
+  background-color: var(--theme-background-primary);
+}
+
+.theme-bg-secondary {
+  background-color: var(--theme-background-secondary);
+}
+
+.theme-bg-tertiary {
+  background-color: var(--theme-background-tertiary);
+}
+
+.theme-text-primary {
+  color: var(--theme-text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--theme-text-secondary);
+}
+
+.theme-text-muted {
+  color: var(--theme-text-muted);
+}
+
+.theme-border {
+  border-color: var(--theme-border-color);
+}
+
+.theme-accent {
+  color: var(--theme-accent-color);
+}
+
+.theme-card {
+  background: var(--theme-card-background);
+  box-shadow: 0 4px 6px var(--theme-shadow-color);
+}
+
+.theme-glass {
+  background: var(--theme-glass-background);
+  backdrop-filter: blur(10px);
+}
+
+/* Smooth transitions for theme changes */
+
+/* Custom animations for contact form */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Override Tailwind classes for theme support */
+.bg-white {
+  background-color: var(--theme-background-primary) !important;
+}
+
+.bg-gray-50 {
+  background-color: var(--theme-background-secondary) !important;
+}
+
+.bg-gray-100 {
+  background-color: var(--theme-background-tertiary) !important;
+}
+
+.text-gray-900 {
+  color: var(--theme-text-primary) !important;
+}
+
+.text-gray-600 {
+  color: var(--theme-text-secondary) !important;
+}
+
+.text-gray-500 {
+  color: var(--theme-text-muted) !important;
+}
+
+.border-gray-200 {
+  border-color: var(--theme-border-color) !important;
+}
+
+.border-gray-300 {
+  border-color: var(--theme-border-color) !important;
+}
+
+/* Form input styling for dark mode */
+.dark-theme input::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+.dark-theme textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+.dark-theme select {
+  color: var(--theme-text-primary) !important;
+}
+
+.dark-theme select option {
+  color: var(--theme-text-primary) !important;
+  background-color: var(--theme-background-primary) !important;
+}
+
+/* Custom animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
