@@ -21,6 +21,16 @@ import Login from './components/auth/Login.jsx';
 import Register from './components/auth/Register.jsx';
 import UserProfile from './components/auth/UserProfile.jsx';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
+import HRDashboard from './pages/HRDashboard.jsx';
+import HRDashboardHome from './pages/HRDashboardHome.jsx';
+import RegistrationsPage from './pages/RegistrationsPage.jsx';
+import ConsultationsPage from './pages/ConsultationsPage.jsx';
+import ContactsPage from './pages/ContactsPage.jsx';
+import PostJobPage from './pages/PostJobPage.jsx';
+import PostedJobsPage from './pages/PostedJobsPage.jsx';
+import AppliedFormsPage from './pages/AppliedFormsPage.jsx';
+import AppliedCoursesPage from './pages/AppliedCoursesPage.jsx';
+import CourseManagementPage from './pages/CourseManagementPage.jsx';
 
 // Global Carousel Data
 const carouselSentences = [
@@ -347,6 +357,106 @@ function AppContent() {
                 </motion.div>
               </ProtectedRoute>
             } />
+            <Route path="/hr-dashboard" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <HRDashboardHome />
+              </motion.div>
+            } />
+            <Route path="/hr-dashboard-details" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <HRDashboard />
+              </motion.div>
+            } />
+            <Route path="/registrations" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <RegistrationsPage />
+              </motion.div>
+            } />
+            <Route path="/consultations" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <ConsultationsPage />
+              </motion.div>
+            } />
+            <Route path="/contacts" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <ContactsPage />
+              </motion.div>
+            } />
+            <Route path="/post-job" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <PostJobPage />
+              </motion.div>
+            } />
+            <Route path="/posted-jobs" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <PostedJobsPage />
+              </motion.div>
+            } />
+            <Route path="/applied-forms" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <AppliedFormsPage />
+              </motion.div>
+            } />
+            <Route path="/applied-courses" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <AppliedCoursesPage />
+              </motion.div>
+            } />
+            <Route path="/course-management" element={
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <CourseManagementPage />
+              </motion.div>
+            } />
           </Routes>
         </AnimatePresence>
       </div>
@@ -359,7 +469,7 @@ function AppContent() {
       </motion.div>
       {showPopup && <ChatBotPopup onClose={() => setShowPopup(false)} />}
       {showConsultationForm && <ConsultationForm isOpen={showConsultationForm} onClose={() => setShowConsultationForm(false)} />}
-      <ChatBotButton />
+      {!location.pathname.startsWith('/hr-dashboard') && !location.pathname.startsWith('/registrations') && !location.pathname.startsWith('/consultations') && !location.pathname.startsWith('/contacts') && <ChatBotButton />}
 
       {showSubscriptionPopup && (
         <motion.div

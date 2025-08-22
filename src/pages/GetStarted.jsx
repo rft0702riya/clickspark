@@ -51,38 +51,38 @@ const GetStarted = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Hero Section */}
       <section className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 lg:px-8">
-        <motion.div
-          className="absolute inset-0 z-0"
-          style={{ y: yWave }}
-        >
+      <motion.div
+        className="absolute inset-0 z-0"
+        style={{ y: yWave }}
+      >
           <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-orange-400/10"></div>
-        </motion.div>
+      </motion.div>
 
         <div className="max-w-7xl mx-auto relative z-10">
-          <motion.div
+        <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
-          >
-            <motion.h1
+        >
+          <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6"
             >
               Ready to <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Dominate</span> Your Market?
-            </motion.h1>
-            <motion.p
+          </motion.h1>
+          <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-xl sm:text-2xl text-gray-600 max-w-3xl mx-auto mb-8"
             >
               Join 500+ businesses that have transformed their digital presence with our proven strategies
-            </motion.p>
-            
-            <motion.div
+          </motion.p>
+
+        <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
@@ -110,7 +110,7 @@ const GetStarted = () => {
             className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
           >
             {testimonials.map((testimonial, index) => (
-              <motion.div
+                <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -126,11 +126,11 @@ const GetStarted = () => {
                 <div>
                   <p className="font-semibold text-gray-900">{testimonial.name}</p>
                   <p className="text-sm text-gray-500">{testimonial.role}</p>
-                </div>
-              </motion.div>
-            ))}
+                  </div>
+                </motion.div>
+              ))}
           </motion.div>
-        </div>
+            </div>
       </section>
 
       {/* Benefits Section */}
@@ -153,7 +153,7 @@ const GetStarted = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {benefits.map((benefit, index) => (
-              <motion.div
+            <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -166,7 +166,7 @@ const GetStarted = () => {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{benefit.title}</h3>
                 <p className="text-gray-600">{benefit.desc}</p>
-              </motion.div>
+            </motion.div>
             ))}
           </div>
         </div>
@@ -192,7 +192,7 @@ const GetStarted = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {packages.map((pkg, index) => (
-              <motion.div
+          <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -207,7 +207,7 @@ const GetStarted = () => {
                     <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold">
                       Most Popular
                     </span>
-                  </div>
+              </div>
                 )}
                 
                 <div className="text-center mb-6">
@@ -215,8 +215,8 @@ const GetStarted = () => {
                   <div className="flex items-baseline justify-center gap-1">
                     <span className="text-4xl font-bold text-gray-900">{pkg.price}</span>
                     <span className="text-gray-500">/{pkg.duration}</span>
-                  </div>
-                </div>
+              </div>
+              </div>
 
                 <ul className="space-y-3 mb-8">
                   {pkg.features.map((feature, featureIndex) => (
@@ -240,8 +240,8 @@ const GetStarted = () => {
                 </motion.button>
               </motion.div>
             ))}
-          </div>
-        </div>
+              </div>
+              </div>
       </section>
 
       {/* CTA Section */}
@@ -276,9 +276,9 @@ const GetStarted = () => {
                 Download Case Study <ArrowRight className="w-5 h-5" />
               </motion.button>
             </div>
-          </motion.div>
-        </div>
-      </section>
+        </motion.div>
+      </div>
+    </section>
     </div>
   );
 };
