@@ -4,6 +4,7 @@ import {
   Users, 
   Calendar, 
   Mail,
+  Phone,
   ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -38,6 +39,15 @@ const HRDashboardHome = () => {
       color: "bg-yellow-500",
       action: "Get Started >",
       onClick: () => navigate('/contacts')
+    },
+    {
+      id: 4,
+      title: "Strategy Calls",
+      description: "Manage strategy call requests and appointments",
+      icon: <Phone className="w-8 h-8" />,
+      color: "bg-purple-500",
+      action: "Get Started >",
+      onClick: () => navigate('/strategy-calls')
     }
   ];
 
@@ -63,7 +73,7 @@ const HRDashboardHome = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
         >
           {dashboardCards.map((card, index) => (
             <motion.div
@@ -71,7 +81,7 @@ const HRDashboardHome = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + index * 0.1 }}
-              className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer group border border-gray-200 relative overflow-hidden"
+              className="bg-white shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer group border border-gray-200 relative overflow-hidden"
               onClick={card.onClick}
               whileHover={{ 
                 scale: 1.05, 
@@ -131,12 +141,13 @@ const HRDashboardHome = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto"
+          className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
         >
           {[
             { number: "150+", label: "Active Users", color: "from-blue-500 to-blue-600" },
             { number: "25", label: "Consultation Requests", color: "from-green-500 to-green-600" },
-            { number: "89", label: "Contact Submissions", color: "from-yellow-500 to-yellow-600" }
+            { number: "89", label: "Contact Submissions", color: "from-yellow-500 to-yellow-600" },
+            { number: "12", label: "Strategy Calls", color: "from-purple-500 to-purple-600" }
           ].map((stat, index) => (
             <motion.div
               key={index}
@@ -148,7 +159,7 @@ const HRDashboardHome = () => {
                 y: -5,
                 boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
               }}
-              className="bg-white rounded-lg p-6 text-center shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+              className="bg-white p-6 text-center shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer group"
             >
               <motion.div 
                 className={`text-3xl font-bold mb-2 bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}

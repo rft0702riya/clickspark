@@ -1,20 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { X, User, Mail, Phone, Building, Calendar, Clock, MessageSquare } from 'lucide-react';
+import { X, MessageSquare, Building, User, Mail, Phone } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
-const ConsultationForm = ({ isOpen, onClose }) => {
+const StrategyCallForm = ({ isOpen, onClose }) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     company: '',
-    preferredDate: '',
-    preferredTime: '',
-    projectDetails: ''
+    message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+
+  // Auto-fill form data when user is logged in
+  useEffect(() => {
+    if (isOpen && user) {
+      // Split user name into first and last name
+      const nameParts = user.name ? user.name.split(' ') : ['', ''];
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      setFormData({
+        firstName: firstName,
+        lastName: lastName,
+        email: user.email || '',
+        phone: user.phone || '',
+        company: user.company || '',
+        message: 'I would like to schedule a free strategy call to discuss my business goals and digital marketing needs.'
+      });
+    }
+  }, [isOpen, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,12 +50,30 @@ const ConsultationForm = ({ isOpen, onClose }) => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/consultation/request', {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Please login to request a strategy call');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Prepare the data for submission
+      const submissionData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        message: formData.message
+      };
+
+      const response = await fetch('http://localhost:5000/api/strategy-call/request', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       });
 
       const data = await response.json();
@@ -46,17 +84,16 @@ const ConsultationForm = ({ isOpen, onClose }) => {
           onClose();
           setSuccess(false);
           setFormData({
-            fullName: '',
+            firstName: '',
+            lastName: '',
             email: '',
             phone: '',
             company: '',
-            preferredDate: '',
-            preferredTime: '',
-            projectDetails: ''
+            message: ''
           });
         }, 3000);
       } else {
-        setError(data.message || 'Failed to submit consultation request');
+        setError(data.message || 'Failed to submit strategy call request');
       }
     } catch (err) {
       setError('Network error. Please try again.');
@@ -94,10 +131,10 @@ const ConsultationForm = ({ isOpen, onClose }) => {
           
           <div className="text-center max-w-md mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">
-              Get Your Free Consultation
+              Free Strategy Call Request
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed">
-              Ready to transform your digital presence? Let's discuss your goals and create a winning strategy together.
+              Get your 15-minute free strategy consultation and discover how we can transform your digital presence.
             </p>
           </div>
         </div>
@@ -116,30 +153,51 @@ const ConsultationForm = ({ isOpen, onClose }) => {
                 </svg>
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">Request Submitted!</h3>
-              <p className="text-gray-600 text-lg">We'll contact you within 24 hours to schedule your consultation.</p>
+              <p className="text-gray-600 text-lg">We'll contact you within 24 hours to schedule your 15-minute strategy call.</p>
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Full Name and Email - Two Columns */}
+              {/* Name Fields - Two Columns */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">
-                    Full Name <span className="text-red-500">*</span>
+                    First Name <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                     <input
                       type="text"
-                      name="fullName"
-                      value={formData.fullName}
+                      name="firstName"
+                      value={formData.firstName}
                       onChange={handleChange}
                       required
                       className="w-full pl-10 pr-4 py-4 border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
-                      placeholder="Enter your full name"
+                      placeholder="Enter your first name"
                     />
                   </div>
                 </div>
                 
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Last Name <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 pr-4 py-4 border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
+                      placeholder="Enter your last name"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Email and Phone - Two Columns */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">
                     Email Address <span className="text-red-500">*</span>
@@ -153,14 +211,11 @@ const ConsultationForm = ({ isOpen, onClose }) => {
                       onChange={handleChange}
                       required
                       className="w-full pl-10 pr-4 py-4 border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
-                      placeholder="Enter your email"
+                      placeholder="your@company.com"
                     />
                   </div>
                 </div>
-              </div>
-
-              {/* Phone Number and Company Name - Two Columns */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">
                     Phone Number <span className="text-red-500">*</span>
@@ -174,11 +229,14 @@ const ConsultationForm = ({ isOpen, onClose }) => {
                       onChange={handleChange}
                       required
                       className="w-full pl-10 pr-4 py-4 border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
-                      placeholder="Enter your phone number"
+                      placeholder="(555) 123-4567"
                     />
                   </div>
                 </div>
-                
+              </div>
+
+              {/* Company and Message */}
+              <div className="space-y-6">
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">
                     Company Name
@@ -191,80 +249,39 @@ const ConsultationForm = ({ isOpen, onClose }) => {
                       value={formData.company}
                       onChange={handleChange}
                       className="w-full pl-10 pr-4 py-4 border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
-                      placeholder="Enter your company name"
+                      placeholder="Enter your company name (optional)"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Tell us about your business goals <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <MessageSquare className="absolute left-3 top-3 text-gray-400" size={18} />
+                    <textarea
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      required
+                      rows="6"
+                      className="w-full pl-10 pr-4 py-4 border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 text-gray-900 placeholder-gray-400 resize-none"
+                      placeholder="Describe your current marketing challenges, business goals, and what you hope to achieve from this strategy call..."
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Preferred Date and Preferred Time - Two Columns */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
-                    Preferred Date <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                    <input
-                      type="date"
-                      name="preferredDate"
-                      value={formData.preferredDate}
-                      onChange={handleChange}
-                      required
-                      className="w-full pl-10 pr-4 py-4 border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 text-gray-900"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
-                    Preferred Time <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                    <select
-                      name="preferredTime"
-                      value={formData.preferredTime}
-                      onChange={handleChange}
-                      required
-                      className="w-full pl-10 pr-4 py-4 border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 text-gray-900 appearance-none bg-white"
-                    >
-                      <option value="">Select preferred time</option>
-                      <option value="9:00 AM">9:00 AM</option>
-                      <option value="10:00 AM">10:00 AM</option>
-                      <option value="11:00 AM">11:00 AM</option>
-                      <option value="12:00 PM">12:00 PM</option>
-                      <option value="1:00 PM">1:00 PM</option>
-                      <option value="2:00 PM">2:00 PM</option>
-                      <option value="3:00 PM">3:00 PM</option>
-                      <option value="4:00 PM">4:00 PM</option>
-                      <option value="5:00 PM">5:00 PM</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Project Details - Full Width */}
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">
-                  Tell us about your project
-                </label>
-                <div className="relative">
-                  <MessageSquare className="absolute left-3 top-3 text-gray-400" size={18} />
-                  <textarea
-                    name="projectDetails"
-                    value={formData.projectDetails}
-                    onChange={handleChange}
-                    rows="4"
-                    className="w-full pl-10 pr-4 py-4 border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 text-gray-900 placeholder-gray-400 resize-none"
-                    placeholder="Describe your project, goals, and any specific requirements..."
-                  />
-                </div>
+              {/* Info Box */}
+              <div className="bg-blue-50 border border-blue-200 p-4">
+                <h4 className="font-semibold text-blue-900 mb-2">What to expect:</h4>
+                <ul className="text-sm text-blue-800 space-y-1">
+                  <li>• 15-minute focused strategy session</li>
+                  <li>• Discussion of your business goals</li>
+                  <li>• Customized marketing recommendations</li>
+                  <li>• No pressure sales - just valuable insights</li>
+                </ul>
               </div>
 
               {/* Error Message */}
@@ -296,7 +313,7 @@ const ConsultationForm = ({ isOpen, onClose }) => {
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full hover:translate-x-full transition-transform duration-1000"></div>
                   <span className="relative z-10">
-                    {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                    {isSubmitting ? 'Submitting...' : 'Request Strategy Call'}
                   </span>
                 </motion.button>
               </div>
@@ -314,4 +331,4 @@ const ConsultationForm = ({ isOpen, onClose }) => {
   );
 };
 
-export default ConsultationForm;
+export default StrategyCallForm;

@@ -124,6 +124,9 @@ Phone: +1 (555) 123-4567`;
   const sendEmail = async (consultationId, toEmail, subject, message) => {
     try {
       setSendingEmail(true);
+      console.log('Sending email to:', toEmail);
+      console.log('Email subject:', subject);
+      
       const response = await fetch('http://localhost:5000/api/hr/send-email', {
         method: 'POST',
         headers: {
@@ -138,17 +141,24 @@ Phone: +1 (555) 123-4567`;
         })
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
       if (response.ok) {
+        const result = await response.json();
+        console.log('Email sent successfully:', result);
         alert('Email sent successfully!');
         setShowEmailModal(false);
         setEmailSubject('');
         setEmailMessage('');
       } else {
-        alert('Failed to send email. Please try again.');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Email sending failed:', errorData);
+        alert(`Failed to send email: ${errorData.message || 'Please try again.'}`);
       }
     } catch (error) {
       console.error('Error sending email:', error);
-      alert('Error sending email. Please try again.');
+      alert(`Error sending email: ${error.message}`);
     } finally {
       setSendingEmail(false);
     }

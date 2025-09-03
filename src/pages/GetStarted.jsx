@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, CheckCircle, Star, Users, TrendingUp, Target, Zap, Shield, Award, Clock, Phone, Mail } from 'lucide-react';
+import { ArrowRight, CheckCircle, Star, Users, TrendingUp, Target, Zap, Shield, Award, Clock, Phone, Mail, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const GetStarted = () => {
   const { currentTheme } = useTheme();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('strategy');
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const { scrollY } = useScroll();
   const yWave = useTransform(scrollY, [0, 200], [0, -10]);
@@ -23,29 +29,58 @@ const GetStarted = () => {
     { name: "Lisa Rodriguez", role: "Marketing Director", rating: 5, text: "Best investment we made. ROI exceeded expectations." },
   ];
 
-  const packages = [
-    {
-      name: "Starter",
-      price: "$997",
-      duration: "month",
-      features: ["Website Audit", "SEO Strategy", "30-Day Plan", "Email Support"],
-      popular: false
-    },
-    {
-      name: "Growth",
-      price: "$2,497",
-      duration: "month",
-      features: ["Everything in Starter", "Content Strategy", "Social Media", "Weekly Calls", "Priority Support"],
-      popular: true
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      duration: "",
-      features: ["Full-Service Marketing", "Dedicated Manager", "Custom Strategy", "24/7 Support"],
-      popular: false
+  const handleStrategyCallClick = async () => {
+    if (!user) {
+      alert('Please login to request a strategy call. You need to be logged in to access this feature.');
+      navigate('/login');
+      return;
     }
-  ];
+
+    setIsSubmitting(true);
+
+    try {
+      // Split user name into first and last name
+      const nameParts = user.name ? user.name.split(' ') : ['', ''];
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      // Prepare the data for submission
+      const submissionData = {
+        firstName: firstName,
+        lastName: lastName,
+        email: user.email || '',
+        phone: user.phone || '',
+        company: user.company || '',
+        message: 'I would like to schedule a free strategy call to discuss my business goals and digital marketing needs.'
+      };
+
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/strategy-call/request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(submissionData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setShowSuccessPopup(true);
+        // Auto-hide popup after 5 seconds
+        setTimeout(() => {
+          setShowSuccessPopup(false);
+        }, 5000);
+      } else {
+        alert(data.message || 'Failed to submit strategy call request. Please try again.');
+      }
+    } catch (err) {
+      alert('Network error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
@@ -89,11 +124,17 @@ const GetStarted = () => {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
               <motion.button
+                onClick={handleStrategyCallClick}
+                disabled={isSubmitting}
                 whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(245, 158, 11, 0.3)' }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-xl text-lg font-bold flex items-center gap-3 shadow-lg"
+                className={`px-8 py-4 text-lg font-bold flex items-center gap-3 shadow-lg ${
+                  isSubmitting 
+                    ? 'bg-gray-400 cursor-not-allowed text-white' 
+                    : 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600'
+                }`}
               >
-                Get Your Free Strategy Call <ArrowRight className="w-5 h-5" />
+                {isSubmitting ? 'Submitting...' : 'Get Your Free Strategy Call'} <ArrowRight className="w-5 h-5" />
               </motion.button>
               <div className="flex items-center gap-2 text-gray-600">
                 <Clock className="w-5 h-5 text-yellow-500" />
@@ -115,7 +156,7 @@ const GetStarted = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 1 + index * 0.1 }}
-                className="bg-white p-6 rounded-xl shadow-lg border border-gray-100"
+                className="bg-white p-6 shadow-lg border border-gray-100"
               >
                 <div className="flex items-center gap-1 mb-3">
                   {[...Array(testimonial.rating)].map((_, i) => (
@@ -159,7 +200,7 @@ const GetStarted = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="text-center p-6 rounded-xl bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-100"
+                className="text-center p-6 bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-100"
               >
                 <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mx-auto mb-4 text-white">
                   {benefit.icon}
@@ -172,77 +213,7 @@ const GetStarted = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Choose Your Growth Path
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Flexible plans designed to scale with your business
-            </p>
-          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {packages.map((pkg, index) => (
-          <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className={`relative bg-white p-8 rounded-xl shadow-lg border-2 ${
-                  pkg.popular ? 'border-yellow-500 scale-105' : 'border-gray-200'
-                }`}
-              >
-                {pkg.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold">
-                      Most Popular
-                    </span>
-              </div>
-                )}
-                
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{pkg.name}</h3>
-                  <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-4xl font-bold text-gray-900">{pkg.price}</span>
-                    <span className="text-gray-500">/{pkg.duration}</span>
-              </div>
-              </div>
-
-                <ul className="space-y-3 mb-8">
-                  {pkg.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-yellow-500 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-all ${
-                    pkg.popular
-                      ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                  }`}
-                >
-                  Get Started
-                </motion.button>
-              </motion.div>
-            ))}
-              </div>
-              </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-500 to-orange-500">
@@ -262,23 +233,53 @@ const GetStarted = () => {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <motion.button
+                onClick={() => navigate('/contact')}
                 whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-white text-yellow-600 px-8 py-4 rounded-xl text-lg font-bold flex items-center gap-3 shadow-lg"
+                className="bg-white text-yellow-600 px-8 py-4 text-lg font-bold flex items-center gap-3 shadow-lg"
               >
-                Schedule Free Consultation <Phone className="w-5 h-5" />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-bold flex items-center gap-3 hover:bg-white hover:text-yellow-600 transition-all"
-              >
-                Download Case Study <ArrowRight className="w-5 h-5" />
+                Contact Us <Mail className="w-5 h-5" />
               </motion.button>
             </div>
         </motion.div>
       </div>
-    </section>
+          </section>
+
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4"
+          onClick={() => setShowSuccessPopup(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="bg-white shadow-2xl rounded-2xl p-8 max-w-md w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Request Submitted!</h3>
+              <p className="text-gray-600 text-lg mb-6">
+                Your strategy call request has been successfully submitted! We'll contact you within 24 hours to schedule your 15-minute consultation.
+              </p>
+              <button
+                onClick={() => setShowSuccessPopup(false)}
+                className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all duration-200"
+              >
+                Got it!
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 };

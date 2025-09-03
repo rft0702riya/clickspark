@@ -34,7 +34,7 @@ const CourseManagementPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-lg shadow-sm p-8 border border-gray-200"
+          className="bg-white shadow-sm p-8 border border-gray-200"
         >
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -44,7 +44,7 @@ const CourseManagementPage = () => {
             <p className="text-gray-600 mb-6">
               Create, edit, and manage course offerings and curriculum content.
             </p>
-            <button className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+            <button className="bg-red-600 text-white px-6 py-3 hover:bg-red-700 transition-colors">
               Manage Courses
             </button>
           </div>

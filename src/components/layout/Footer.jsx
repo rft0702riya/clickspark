@@ -19,7 +19,7 @@ const footerLinks = {
     { text: "Get Started", path: "/get-started" },
   ],
   Contact: [
-    { icon: <Mail size={14} />, text: "info@example.com" },
+    { icon: <Mail size={14} />, text: "info@clickspark.digital" },
     { icon: <Phone size={14} />, text: "+91 7082101534" },
     { icon: <MapPin size={14} />, text: "1280-A/29 Model Town Opposite Power House Rohtak Pin code - 124001" },
   ],

@@ -176,7 +176,7 @@ const RegistrationsPage = () => {
                   placeholder="Search users by name or email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -185,7 +185,7 @@ const RegistrationsPage = () => {
             <div className="flex gap-4">
               <button
                 onClick={() => setSearchTerm('')}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
               >
                 Clear
               </button>

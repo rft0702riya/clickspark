@@ -141,6 +141,9 @@ Phone: +1 (555) 123-4567`;
   const sendEmail = async (contactId, toEmail, subject, message) => {
     try {
       setSendingEmail(true);
+      console.log('Sending email to:', toEmail);
+      console.log('Email subject:', subject);
+      
       const response = await fetch('http://localhost:5000/api/hr/send-email', {
         method: 'POST',
         headers: {
@@ -155,17 +158,24 @@ Phone: +1 (555) 123-4567`;
         })
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
       if (response.ok) {
+        const result = await response.json();
+        console.log('Email sent successfully:', result);
         alert('Email sent successfully!');
         setShowEmailModal(false);
         setEmailSubject('');
         setEmailMessage('');
       } else {
-        alert('Failed to send email. Please try again.');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Email sending failed:', errorData);
+        alert(`Failed to send email: ${errorData.message || 'Please try again.'}`);
       }
     } catch (error) {
       console.error('Error sending email:', error);
-      alert('Error sending email. Please try again.');
+      alert(`Error sending email: ${error.message}`);
     } finally {
       setSendingEmail(false);
     }
@@ -257,7 +267,7 @@ Phone: +1 (555) 123-4567`;
                   placeholder="Search by name, email, phone, company, or website..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -266,7 +276,7 @@ Phone: +1 (555) 123-4567`;
             <div className="flex gap-4">
               <button
                 onClick={() => setSearchTerm('')}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
               >
                 Clear
               </button>

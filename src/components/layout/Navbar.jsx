@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Home, Info, Briefcase, FolderOpen, Phone, User, LogOut, Moon, Sun, LogIn, Menu, X } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Home, Users, Briefcase, FolderOpen, Phone, User, LogOut, Moon, Sun, LogIn, Menu, X, ChevronDown } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import './Navbar.css';
@@ -9,11 +9,14 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const { isDarkTheme, toggleTheme } = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const navItems = [
     { path: '/', label: 'Home', icon: <Home size={20} /> },
-    { path: '/about', label: 'About', icon: <Info size={20} /> },
+    { path: '/about', label: 'About', icon: <Users size={20} /> },
     { path: '/services', label: 'Services', icon: <Briefcase size={20} /> },
     { path: '/projects', label: 'Projects', icon: <FolderOpen size={20} /> },
     { path: '/contact', label: 'Contact', icon: <Phone size={20} /> },
@@ -24,6 +27,34 @@ const Navbar = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleSignIn = () => {
+    setIsDropdownOpen(false);
+    navigate('/login');
+  };
+
+  const handleSignUp = () => {
+    setIsDropdownOpen(false);
+    navigate('/register');
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav className={`navbar ${isDarkTheme ? 'dark' : ''}`}>
@@ -66,10 +97,25 @@ const Navbar = () => {
               </button>
             </div>
           ) : (
-            <Link to="/login" className="navbar-login-btn">
-              <LogIn size={18} />
-              <span>Login</span>
-            </Link>
+            <div className="navbar-auth-dropdown" ref={dropdownRef}>
+              <button onClick={toggleDropdown} className="navbar-auth-btn">
+                <User size={18} />
+                <ChevronDown size={14} className={`dropdown-arrow ${isDropdownOpen ? 'rotate' : ''}`} />
+              </button>
+              
+              {isDropdownOpen && (
+                <div className="navbar-dropdown-menu">
+                  <button onClick={handleSignIn} className="navbar-dropdown-item">
+                    <LogIn size={16} />
+                    <span>Sign In</span>
+                  </button>
+                  <button onClick={handleSignUp} className="navbar-dropdown-item">
+                    <User size={16} />
+                    <span>Sign Up</span>
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
@@ -113,10 +159,16 @@ const Navbar = () => {
               </button>
             </>
           ) : (
-            <Link to="/login" className="navbar-mobile-action" onClick={() => setIsMobileMenuOpen(false)}>
-              <LogIn size={20} />
-              <span>Login</span>
-            </Link>
+            <>
+              <button onClick={() => { handleSignIn(); setIsMobileMenuOpen(false); }} className="navbar-mobile-action">
+                <LogIn size={20} />
+                <span>Sign In</span>
+              </button>
+              <button onClick={() => { handleSignUp(); setIsMobileMenuOpen(false); }} className="navbar-mobile-action">
+                <User size={20} />
+                <span>Sign Up</span>
+              </button>
+            </>
           )}
         </div>
       </div>

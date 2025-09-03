@@ -212,6 +212,14 @@ const HRDashboard = () => {
       icon: <Mail className="w-6 h-6" />,
       color: 'bg-yellow-500',
       description: 'Contact form submissions this week'
+    },
+    {
+      title: 'Strategy Calls',
+      value: stats.new_strategy_calls_week || 0,
+      subtitle: `${stats.total_strategy_calls || 0} Total Requests`,
+      icon: <Phone className="w-6 h-6" />,
+      color: 'bg-purple-500',
+      description: 'Strategy call requests this week'
     }
   ];
 
@@ -233,7 +241,7 @@ const HRDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
         >
           {statsCards.map((stat, index) => (
             <motion.div
@@ -249,6 +257,8 @@ const HRDashboard = () => {
                   navigate('/consultations');
                 } else if (stat.title === 'Contacts') {
                   navigate('/contacts');
+                } else if (stat.title === 'Strategy Calls') {
+                  navigate('/strategy-calls');
                 }
               }}
               whileHover={{ scale: 1.02 }}

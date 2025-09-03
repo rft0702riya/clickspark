@@ -53,7 +53,14 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        const errorMessage = data.message || 'Login failed';
+        
+        // Only show browser alert for account not found (not for wrong password)
+        if (data.code === 'ACCOUNT_NOT_FOUND' && (errorMessage.includes('Account not found') || errorMessage.includes('sign up first'))) {
+          alert('⚠️ Account Not Found!\n\nYou need to create an account first before you can log in.\n\nPlease click "OK" to go to the registration page.');
+        }
+        
+        throw new Error(errorMessage);
       }
 
       // Store user data and token
