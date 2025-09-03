@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import consultationRoutes from "./routes/consultationRoutes.js";
 import hrRoutes from "./routes/hrRoutes.js";
+import strategyCallRoutes from "./routes/strategyCallRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -28,6 +29,7 @@ app.use("/", authRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/consultation", consultationRoutes);
 app.use("/api/hr", hrRoutes);
+app.use("/api/strategy-call", strategyCallRoutes);
 
 // Test route to verify server is running
 app.get("/test", (req, res) => {

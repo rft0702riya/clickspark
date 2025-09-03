@@ -83,6 +83,22 @@ const getDashboardStats = async (req, res) => {
             console.log('Contacts table not found, using default values');
         }
         
+        // Get strategy call stats (if strategy_calls table exists)
+        let strategyCallStats = { total_strategy_calls: 0, new_strategy_calls_today: 0, new_strategy_calls_week: 0 };
+        try {
+            const strategyCallQuery = `
+                SELECT 
+                    COUNT(*) as total_strategy_calls,
+                    COUNT(CASE WHEN DATE(created_at) = CURDATE() THEN 1 END) as new_strategy_calls_today,
+                    COUNT(CASE WHEN DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 7 DAY) THEN 1 END) as new_strategy_calls_week
+                FROM strategy_calls
+            `;
+            const [strategyCallResult] = await db.execute(strategyCallQuery);
+            strategyCallStats = strategyCallResult[0];
+        } catch (error) {
+            console.log('Strategy calls table not found, using default values');
+        }
+        
         const [userStats] = await db.execute(userStatsQuery);
         
         const dashboardStats = {
@@ -101,7 +117,12 @@ const getDashboardStats = async (req, res) => {
             // Contact Stats
             total_contacts: contactStats.total_contacts || 0,
             new_contacts_today: contactStats.new_contacts_today || 0,
-            new_contacts_week: contactStats.new_contacts_week || 0
+            new_contacts_week: contactStats.new_contacts_week || 0,
+            
+            // Strategy Call Stats
+            total_strategy_calls: strategyCallStats.total_strategy_calls || 0,
+            new_strategy_calls_today: strategyCallStats.new_strategy_calls_today || 0,
+            new_strategy_calls_week: strategyCallStats.new_strategy_calls_week || 0
         };
         
         res.json({
@@ -411,18 +432,20 @@ const sendEmail = async (req, res) => {
             });
         }
 
-        // Email configuration (you'll need to set up your email service)
-        const emailConfig = {
-            from: process.env.EMAIL_FROM || 'noreply@clickspark.com',
-            to: to,
-            subject: subject,
-            text: message,
-            html: message.replace(/\n/g, '<br>')
-        };
+        // Import the email service
+        const { sendConsultationEmail } = await import('../utils/emailService.js');
 
-        // For now, we'll just log the email and return success
-        // In production, you would integrate with a real email service like SendGrid, AWS SES, etc.
-        console.log('Email to be sent:', emailConfig);
+        // Send the actual email
+        const emailResult = await sendConsultationEmail(to, subject, message.replace(/\n/g, '<br>'));
+
+        if (!emailResult.success) {
+            console.error('Email sending failed:', emailResult.error);
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to send email',
+                error: emailResult.error
+            });
+        }
 
         // Log email in database for tracking
         const logQuery = `
@@ -432,10 +455,12 @@ const sendEmail = async (req, res) => {
         
         await db.execute(logQuery, [to, subject, message, consultationId || null, contactId || null]);
 
+        console.log('✅ Email sent successfully to:', to, 'Message ID:', emailResult.messageId);
+
         res.json({
             success: true,
             message: 'Email sent successfully',
-            emailConfig: emailConfig
+            messageId: emailResult.messageId
         });
 
     } catch (error) {

@@ -226,7 +226,10 @@ export const login = async (req, res) => {
     );
 
     if (userRows.length === 0) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({ 
+        message: "Account not found. Please sign up first to create an account before logging in.",
+        code: "ACCOUNT_NOT_FOUND"
+      });
     }
 
     const user = userRows[0];
@@ -234,13 +237,16 @@ export const login = async (req, res) => {
     // 2. Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({ 
+        message: "Incorrect password. Please check your password and try again.",
+        code: "INVALID_PASSWORD"
+      });
     }
 
     // 3. Generate JWT token
     const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET || "supersecret",
+      { id: user.id, email: user.email, name: user.name },
+      process.env.JWT_SECRET || "supersecretkey",
       { expiresIn: "1h" }
     );
 
